@@ -1,0 +1,9 @@
+*.iml
+.idea
+.project
+.settings
+.classpath
+.class
+target/
+/outdated-dependencies.txt
+/customer-api-webapp/nbactions.xml
