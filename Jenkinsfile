@@ -34,14 +34,14 @@ podTemplate(
             }
         }
         def repository
-        stage ('Push') {
+        stage ('Docker build and push') {
             container ('docker') {
                 repository = "shboland/spring-api"
                 sh "docker build -t ${repository}:${commitId} ."
 
                 withCredentials([usernamePassword(credentialsId: 'dockerhub',
                                         usernameVariable: 'registryUser', passwordVariable: 'registryPassword')]) {
-                    sh "docker push ${repository}:${commitId}"
+                    sh "docker push ${repository}"
                 }
             }
         }
