@@ -19,6 +19,10 @@ podTemplate(
         hostPathVolume(
             hostPath: '/var/run/docker.sock',
             mountPath: '/var/run/docker.sock'
+        ),
+        hostPathVolume(
+            hostPath: '/root/.m2',
+            mountPath: '/root/.m2'
         )
     ]
 ) {
@@ -35,12 +39,15 @@ podTemplate(
         }
         def repository
         stage ('Docker build and push') {
-            container ('docker') {
-                repository = "shboland/spring-api"
-                sh "docker build -t ${repository}:${commitId} ."
 
+
+            container ('docker') {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub',
-                                        usernameVariable: 'registryUser', passwordVariable: 'registryPassword')]) {
+                        usernameVariable: 'registryUser', passwordVariable: 'registryPassword')]) {
+
+                    sh "docker login -u=$registryUser -p=$registryPassword"
+                    repository = "shboland/spring-api"
+                    sh "docker build -t ${repository}:${commitId} ."
                     sh "docker push ${repository}"
                 }
             }
