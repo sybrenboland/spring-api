@@ -48,5 +48,9 @@ podTemplate(
                 }
             }
         }
+
+        stage("Cleanup") {
+            cleanWs()
+        }
     }
 }
