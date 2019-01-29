@@ -1,0 +1,7 @@
+namespace: jenkins-project
+commonLabels:
+  env: test
+configMapGenerator:
+- files:
+  - application.properties
+  name: application-config

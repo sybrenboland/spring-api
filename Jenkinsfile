@@ -3,7 +3,8 @@ podTemplate(
     inheritFrom: 'default',
     containers: [
         containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'docker', image: 'docker:18.02', ttyEnabled: true, command: 'cat')
+        containerTemplate(name: 'docker', image: 'docker:18.02', ttyEnabled: true, command: 'cat'),
+        containerTemplate(name: 'kubctl', image: 'lachlanevenson/k8s-kubectl:1.13.2', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
         hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
@@ -25,14 +26,25 @@ podTemplate(
 
         stage ('Docker build and push') {
             container ('docker') {
-                def repository = "sybrenbolandit/java-spring-api"
+                def repository = "shboland/spring-api"
 
                 withCredentials([usernamePassword(credentialsId: 'dockerhub',
                         usernameVariable: 'registryUser', passwordVariable: 'registryPassword')]) {
 
                     sh "docker login -u=$registryUser -p=$registryPassword"
-                    sh "docker build -t ${repository}:${commitId} ."
-                    sh "docker push ${repository}:${commitId}"
+                    sh "docker build -t $repository:$commitId ."
+                    sh "docker push $repository:$commitId"
+                }
+            }
+        }
+
+        stage("Deploy") {
+            container('kubectl') {
+                dir("deployment") {
+                    sh """
+                           kustomize edit set imagetag shboland/spring-api:$commitId;
+                           kustomize build overlays/test | kubectl apply --record -f  -
+                       """
                 }
             }
         }
