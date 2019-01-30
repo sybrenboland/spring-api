@@ -24,10 +24,9 @@ podTemplate(
             }
         }
 
+        def repository = "shboland/spring-api"
         stage ('Docker build and push') {
             container ('docker') {
-                def repository = "shboland/spring-api"
-
                 withCredentials([usernamePassword(credentialsId: 'dockerhub',
                         usernameVariable: 'registryUser', passwordVariable: 'registryPassword')]) {
 
@@ -42,7 +41,7 @@ podTemplate(
             container ('kubectl') {
                 dir ("deployment") {
                     sh """
-                           kustomize edit set imagetag shboland/spring-api:$commitId;
+                           kustomize edit set imagetag $repository:$commitId;
                            kustomize build overlays/test | kubectl apply --record -f  -
                        """
                 }
