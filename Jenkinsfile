@@ -4,7 +4,7 @@ podTemplate(
     containers: [
         containerTemplate(name: 'maven', image: 'maven:3.3.9-jdk-8-alpine', ttyEnabled: true, command: 'cat'),
         containerTemplate(name: 'docker', image: 'docker:18.02', ttyEnabled: true, command: 'cat'),
-        containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.13.2', ttyEnabled: true, command: 'cat')
+        containerTemplate(name: 'kubectl', image: 'traherom/kustomize-docker:1.0.5', ttyEnabled: true, command: 'cat')
     ],
     volumes: [
         hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock'),
