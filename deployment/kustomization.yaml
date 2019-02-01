@@ -4,6 +4,3 @@ commonLabels:
 resources:
 - deployment.yaml
 - service.yaml
-imageTags:
-- name: shboland/spring-api
-  newTag: 54aa1b2
