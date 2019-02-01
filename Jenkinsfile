@@ -12,43 +12,44 @@ podTemplate(
     ]
 ) {
     node('slave-pod') {
-        def commitId
-        stage ('Extract') {
-            checkout scm
-            commitId = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-        }
 
-        stage ('Build') {
-            container ('maven') {
-                sh 'mvn clean install'
+        try {
+            def commitId
+            stage ('Extract') {
+                checkout scm
+                commitId = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
             }
-        }
 
-        def repository = "shboland/spring-api"
-        stage ('Docker build and push') {
-            container ('docker') {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub',
-                        usernameVariable: 'registryUser', passwordVariable: 'registryPassword')]) {
-
-                    sh "docker login -u=$registryUser -p=$registryPassword"
-                    sh "docker build -t $repository:$commitId ."
-                    sh "docker push $repository:$commitId"
+            stage ('Build') {
+                container ('maven') {
+                    sh 'mvn clean install'
                 }
             }
-        }
 
-        stage ("Deploy") {
-            container ('kubectl') {
-                dir ("deployment") {
-                    sh """
-                           kustomize edit set imagetag $repository:$commitId;
-                           kustomize build overlays/test | kubectl apply --record -f  -
-                       """
+            def repository = "shboland/spring-api"
+            stage ('Docker build and push') {
+                container ('docker') {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                            usernameVariable: 'registryUser', passwordVariable: 'registryPassword')]) {
+
+                        sh "docker login -u=$registryUser -p=$registryPassword"
+                        sh "docker build -t $repository:$commitId ."
+                        sh "docker push $repository:$commitId"
+                    }
                 }
             }
-        }
 
-        stage("Cleanup") {
+            stage ("Deploy") {
+                container ('kubectl') {
+                    dir ("deployment") {
+                        sh """
+                               kustomize edit set imagetag $repository:$commitId;
+                               kustomize build overlays/test | kubectl apply --record -f  -
+                           """
+                    }
+                }
+            }
+        } finally {
             cleanWs()
         }
     }
