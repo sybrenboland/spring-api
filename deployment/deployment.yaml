@@ -4,9 +4,6 @@ metadata:
   name: spring-api
 spec:
   template:
-    metadata:
-      labels:
-        app: spring-api
     spec:
       containers:
       - name: spring-api

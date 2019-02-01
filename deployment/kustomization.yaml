@@ -1,3 +1,9 @@
+namespace: jenkins-project
+commonLabels:
+  app: spring-api
 resources:
 - deployment.yaml
 - service.yaml
+imageTags:
+- name: shboland/spring-api
+  newTag: 54aa1b2

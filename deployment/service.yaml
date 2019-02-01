@@ -3,10 +3,6 @@ kind: Service
 metadata:
   name: spring-api
 spec:
-  template:
-    metadata:
-      labels:
-        app: spring-api
   type: NodePort
   ports:
   - nodePort: 31311
