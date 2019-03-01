@@ -4,6 +4,7 @@ commonLabels:
 bases:
 - ../../base
 patchesStrategicMerge:
+- autoscaling.yaml
 - ingress.yaml
 configMapGenerator:
 - files:

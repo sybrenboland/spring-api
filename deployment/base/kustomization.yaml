@@ -2,6 +2,7 @@ namespace: jenkins-project
 commonLabels:
   app: spring-api
 resources:
+- autoscaling.yaml
 - deployment.yaml
 - ingress.yaml
 - service.yaml
