@@ -18,3 +18,10 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "200m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 5
+          failureThreshold: 6
