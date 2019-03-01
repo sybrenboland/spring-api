@@ -2,7 +2,9 @@ namespace: jenkins-project
 commonLabels:
   env: test
 bases:
-- ../..
+- ../../base
+patchesStrategicMerge:
+- ingress.yaml
 configMapGenerator:
 - files:
   - application.properties

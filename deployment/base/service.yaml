@@ -3,9 +3,8 @@ kind: Service
 metadata:
   name: spring-api
 spec:
-  type: NodePort
   ports:
-  - nodePort: 31311
+  - name: http
     port: 8080
     protocol: TCP
     targetPort: 8080
