@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: spring-api
 spec:
-  ports:
-  - name: http
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
   selector:
     app: spring-api
+  ports:
+    - name: web
+      port: 8080
+    - name: actuator
+      port: 8081

@@ -11,10 +11,10 @@ spec:
         image: shboland/spring-api
         imagePullPolicy: Always
         ports:
-          - name: web
-            containerPort: 8080
-          - name: actuator
-            containerPort: 8081
+        - name: web
+          containerPort: 8080
+        - name: actuator
+          containerPort: 8081
         resources:
           requests:
             memory: "256Mi"
@@ -41,14 +41,14 @@ spec:
             exec:
               command: ["curl", "-XPOST", "http://0.0.0.0:8081/actuator/shutdown"]
         volumeMounts:
-          - name: application-config
-            mountPath: /srv/app/application.properties
-            subPath: application.properties
-          - name: varlog
-            mountPath: /var/log
-      volumes:
         - name: application-config
-          configMap:
-            name: application-config
+          mountPath: /srv/app/application.properties
+          subPath: application.properties
         - name: varlog
+          mountPath: /var/log
+      volumes:
+      - name: application-config
+        configMap:
+          name: application-config
+      - name: varlog
 
