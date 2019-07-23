@@ -5,12 +5,16 @@ metadata:
 spec:
   template:
     spec:
+      terminationGracePeriodSeconds: 45
       containers:
       - name: spring-api
         image: shboland/spring-api
         imagePullPolicy: Always
         ports:
-        - containerPort: 8080
+          - name: web
+            containerPort: 8080
+          - name: actuator
+            containerPort: 8081
         resources:
           requests:
             memory: "256Mi"
@@ -21,7 +25,30 @@ spec:
         livenessProbe:
           httpGet:
             path: /actuator/health
-            port: 8080
+            port: 8081
           initialDelaySeconds: 60
           periodSeconds: 5
           failureThreshold: 6
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          periodSeconds: 5
+          failureThreshold: 1
+          successThreshold: 3
+        lifecycle:
+          preStop:
+            exec:
+              command: ["curl", "-XPOST", "http://0.0.0.0:8081/actuator/shutdown"]
+        volumeMounts:
+          - name: application-config
+            mountPath: /srv/app/application.properties
+            subPath: application.properties
+          - name: varlog
+            mountPath: /var/log
+      volumes:
+        - name: application-config
+          configMap:
+            name: application-config
+        - name: varlog
+
